@@ -3,7 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22"):
+
+def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="output"):
     """Load stock data from CSV and visualize with optional operation dates."""
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"Input file not found: {csv_path}")
@@ -56,7 +57,9 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22"):
     plt.grid(True, linestyle='--', alpha=0.7)
     plt.tight_layout()
     
-    output_image = csv_path.replace('.csv', '_chart.png')
+    os.makedirs(output_dir, exist_ok=True)
+    chart_name = os.path.basename(csv_path).replace('.csv', '_chart.png')
+    output_image = os.path.join(output_dir, chart_name)
     plt.savefig(output_image)
     print(f"Chart saved to {output_image}")
     plt.show()
@@ -66,6 +69,8 @@ def main():
     parser.add_argument("--input", type=str, required=True, help="Path to the stock data CSV file")
     parser.add_argument("--ops", type=str, help="Path to a text file containing operation dates (one per line) or comma-separated dates.")
     parser.add_argument("--start", type=str, default="2022-07-22", help="Start date for the graph (YYYY-MM-DD), default: 2022-01-01")
+    parser.add_argument("--outdir", type=str, default="output",
+                        help="Directory to save the output chart (default: output)")
 
     args = parser.parse_args()
     
@@ -80,7 +85,7 @@ def main():
                 # Fallback to comma-separated list
                 op_dates = args.ops.split(',')
         
-        plot_from_csv(args.input, op_dates, args.start)
+        plot_from_csv(args.input, op_dates, args.start, args.outdir)
     except Exception as e:
         print(f"Error: {e}")
 
