@@ -16,6 +16,10 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
     df['Date'] = pd.to_datetime(df['Date'])
     df.set_index('Date', inplace=True)
 
+    # Adjust pre-split prices (2022-07-22 20-for-1 stock split)
+    split_date = pd.to_datetime("2022-07-22")
+    df.loc[df.index < split_date, 'Close'] /= 20
+
     # Filter data by start date
     if start_date:
         df = df[df.index >= pd.to_datetime(start_date)]
@@ -39,9 +43,13 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
                 if index_tz:
                     op_date = op_date.tz_localize(index_tz)
                 
-                # Find nearest trading date
+                # Find nearest trading date; drop if more than 1 week away
                 nearest_idx = df.index.get_indexer([op_date], method='nearest')[0]
                 nearest_date = df.index[nearest_idx]
+                if abs((nearest_date - op_date).days) > 7:
+                    print(
+                        f"Warning: No trading date within 1 week of {date_str}, skipping.")
+                    continue
                 valid_ops.append((nearest_date, df.loc[nearest_date, 'Close'], date_str))
             except Exception as e:
                 print(f"Warning: Could not process date {date_str}: {e}")
@@ -58,7 +66,8 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
     plt.tight_layout()
     
     os.makedirs(output_dir, exist_ok=True)
-    chart_name = os.path.basename(csv_path).replace('.csv', '_chart.png')
+    chart_name = os.path.basename(csv_path).replace(
+        '.csv', f'_chart_{start_date}.jpg')
     output_image = os.path.join(output_dir, chart_name)
     plt.savefig(output_image)
     print(f"Chart saved to {output_image}")
@@ -68,7 +77,8 @@ def main():
     parser = argparse.ArgumentParser(description="Visualize stock data from a local CSV file.")
     parser.add_argument("--input", type=str, required=True, help="Path to the stock data CSV file")
     parser.add_argument("--ops", type=str, help="Path to a text file containing operation dates (one per line) or comma-separated dates.")
-    parser.add_argument("--start", type=str, default="2022-07-22", help="Start date for the graph (YYYY-MM-DD), default: 2022-01-01")
+    parser.add_argument("--start", type=str, default="2019-07-15",
+                        help="Start date for the graph (YYYY-MM-DD), default: 2019-07-15")
     parser.add_argument("--outdir", type=str, default="output",
                         help="Directory to save the output chart (default: output)")
 
