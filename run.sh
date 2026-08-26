@@ -5,12 +5,12 @@ python fetcher.py \
 
 python visualizer.py \
   --input data/GOOG_data.csv \
-  --start 2019-07-15 \
+  --start 2019-04-22 \
   --ops input/ops.txt \
   --outdir output
 
 python visualizer.py \
   --input data/GOOG_data.csv \
-  --start 2024-01-01 \
+  --start 2024-04-22 \
   --ops input/ops.txt \
   --outdir output
