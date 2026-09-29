@@ -11,6 +11,6 @@ python visualizer.py \
 
 python visualizer.py \
   --input data/GOOG_data.csv \
-  --start 2024-04-22 \
+  --start 2025-04-22 \
   --ops input/ops.txt \
   --outdir output
