@@ -37,11 +37,10 @@ class InteractiveChartTests(unittest.TestCase):
             buttons = figure.layout.xaxis.rangeselector.buttons
             self.assertEqual(
                 [button.label for button in buttons],
-                ["All", "8 years", "4 years", "2 years"]
+                ["10 years", "7 years", "4 years", "1 year"]
             )
-            self.assertEqual([button.count for button in buttons[1:]], [8, 4, 2])
-            self.assertTrue(all(button.step == "year" for button in buttons[1:]))
-            self.assertEqual(buttons[0].step, "all")
+            self.assertEqual([button.count for button in buttons], [10, 7, 4, 1])
+            self.assertTrue(all(button.step == "year" for button in buttons))
             self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmin, pd.Timestamp("2014-01-13"))
             self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmax, pd.Timestamp("2023-01-13"))
             self.assertEqual(

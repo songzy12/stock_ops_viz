@@ -75,10 +75,10 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
                 if df.index.min() != df.index.max() else None
             ),
             rangeselector=dict(buttons=[
-                dict(label="All", step="all"),
-                dict(count=8, label="8 years", step="year", stepmode="backward"),
+                dict(count=10, label="10 years", step="year", stepmode="backward"),
+                dict(count=7, label="7 years", step="year", stepmode="backward"),
                 dict(count=4, label="4 years", step="year", stepmode="backward"),
-                dict(count=2, label="2 years", step="year", stepmode="backward"),
+                dict(count=1, label="1 year", step="year", stepmode="backward"),
             ]),
         ),
     )
