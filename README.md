@@ -61,7 +61,7 @@ python visualizer.py --input data/GOOG_data.csv --ops ops.txt --start 2022-01-01
 - `--ops`: Path to a `.txt` file containing dates (one per line) OR a comma-separated list of dates.
 - `--start`: The start date for the visualization (default: `2022-01-01`).
 
-The chart will be saved as a PNG file in the same directory as the input CSV.
+The chart is saved as a JPG file in the output directory (default: `output/`). The script does not open an interactive plot window.
 
 
 ## License

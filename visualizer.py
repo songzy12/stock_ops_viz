@@ -71,7 +71,7 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
     output_image = os.path.join(output_dir, chart_name)
     plt.savefig(output_image)
     print(f"Chart saved to {output_image}")
-    plt.show()
+    plt.close()
 
 def main():
     parser = argparse.ArgumentParser(description="Visualize stock data from a local CSV file.")
