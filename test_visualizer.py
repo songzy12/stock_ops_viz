@@ -13,7 +13,7 @@ class InteractiveChartTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             csv_path = os.path.join(directory, "TEST_data.csv")
             pd.DataFrame({
-                "Date": ["2023-01-13", "2023-01-06", "2022-07-15", "2015-01-13"],
+                "Date": ["2023-01-13", "2023-01-06", "2022-07-15", "2014-01-13"],
                 "Close": [120, 100, 2000, 1000],
             }).to_csv(csv_path, index=False)
 
@@ -37,16 +37,16 @@ class InteractiveChartTests(unittest.TestCase):
             buttons = figure.layout.xaxis.rangeselector.buttons
             self.assertEqual(
                 [button.label for button in buttons],
-                ["All", "7 years", "5 years", "3 years", "2 years"]
+                ["All", "8 years", "4 years", "2 years"]
             )
-            self.assertEqual([button.count for button in buttons[1:]], [7, 5, 3, 2])
+            self.assertEqual([button.count for button in buttons[1:]], [8, 4, 2])
             self.assertTrue(all(button.step == "year" for button in buttons[1:]))
             self.assertEqual(buttons[0].step, "all")
-            self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmin, pd.Timestamp("2015-01-13"))
+            self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmin, pd.Timestamp("2014-01-13"))
             self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmax, pd.Timestamp("2023-01-13"))
             self.assertEqual(
                 list(figure.layout.xaxis.range),
-                [pd.Timestamp("2016-01-13"), pd.Timestamp("2023-01-13")]
+                [pd.Timestamp("2015-01-13"), pd.Timestamp("2023-01-13")]
             )
             self.assertTrue(figure.layout.xaxis.showspikes)
             self.assertEqual(figure.layout.xaxis.spikemode, "across")

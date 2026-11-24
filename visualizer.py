@@ -71,14 +71,13 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
                 if df.index.min() != df.index.max() else None
             ),
             range=(
-                [max(df.index.min(), df.index.max() - pd.DateOffset(years=7)), df.index.max()]
+                [max(df.index.min(), df.index.max() - pd.DateOffset(years=8)), df.index.max()]
                 if df.index.min() != df.index.max() else None
             ),
             rangeselector=dict(buttons=[
                 dict(label="All", step="all"),
-                dict(count=7, label="7 years", step="year", stepmode="backward"),
-                dict(count=5, label="5 years", step="year", stepmode="backward"),
-                dict(count=3, label="3 years", step="year", stepmode="backward"),
+                dict(count=8, label="8 years", step="year", stepmode="backward"),
+                dict(count=4, label="4 years", step="year", stepmode="backward"),
                 dict(count=2, label="2 years", step="year", stepmode="backward"),
             ]),
         ),
