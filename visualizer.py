@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 import os
+from pathlib import Path
 
 
 def find_valid_ops(df, op_dates):
@@ -78,57 +79,18 @@ def plot_from_csv(csv_path, op_dates=None, start_date="2022-07-22", output_dir="
                 dict(count=10, label="10 years", step="year", stepmode="backward"),
                 dict(count=7, label="7 years", step="year", stepmode="backward"),
                 dict(count=4, label="4 years", step="year", stepmode="backward"),
+                dict(count=3, label="3 years", step="year", stepmode="backward"),
                 dict(count=1, label="1 year", step="year", stepmode="backward"),
             ]),
         ),
     )
     output_html = os.path.join(
         output_dir, os.path.basename(csv_path).replace('.csv', '_chart.html'))
+    post_script_path = Path(__file__).resolve().parent / "assets" / "chart_interactions.js"
+    post_script = post_script_path.read_text(encoding="utf-8")
     interactive_chart.write_html(
         output_html, include_plotlyjs=True,
-        post_script="""
-        const chart = document.getElementById('{plot_id}');
-        let activeMarkers = new Set();
-        function clearMarkers() {
-            for (const marker of activeMarkers) marker.style.fill = 'lightcoral';
-            activeMarkers.clear();
-        }
-        chart.addEventListener('pointermove', event => {
-            const trace = chart._fullData.find(item => item.name === 'Operations');
-            const plot = chart.querySelector('.nsewdrag');
-            if (!trace || trace.visible !== true || !plot) {
-                clearMarkers();
-                return;
-            }
-            const plotBounds = plot.getBoundingClientRect();
-            if (event.clientX < plotBounds.left || event.clientX > plotBounds.right ||
-                event.clientY < plotBounds.top || event.clientY > plotBounds.bottom) {
-                clearMarkers();
-                return;
-            }
-            const markers = chart.querySelectorAll('.scatterlayer .trace' + trace.uid + ' .point');
-            const matching = new Set();
-            for (const marker of markers) {
-                const bounds = marker.getBoundingClientRect();
-                const x = (bounds.left + bounds.right) / 2;
-                if (x >= plotBounds.left && x <= plotBounds.right &&
-                    Math.abs(event.clientX - x) <= 4) {
-                    matching.add(marker);
-                }
-            }
-            for (const marker of activeMarkers) {
-                if (!matching.has(marker)) marker.style.fill = 'lightcoral';
-            }
-            for (const marker of matching) {
-                if (!activeMarkers.has(marker)) {
-                    marker.style.fill = 'darkred';
-                }
-            }
-            activeMarkers = matching;
-        });
-        chart.addEventListener('pointerleave', clearMarkers);
-        chart.on('plotly_afterplot', clearMarkers);
-        """,
+        post_script=post_script,
     )
     print(f"Interactive chart saved to {output_html}")
 

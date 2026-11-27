@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import pandas as pd
@@ -33,13 +34,18 @@ class InteractiveChartTests(unittest.TestCase):
             self.assertEqual(len(figure.data[1].x), 2)
             self.assertEqual(html_path, os.path.join(directory, "TEST_data_chart.html"))
             self.assertTrue(write_html.call_args.kwargs["include_plotlyjs"])
+            self.assertEqual(
+                write_html.call_args.kwargs["post_script"],
+                (Path(__file__).resolve().parent / "assets" / "chart_interactions.js")
+                .read_text(encoding="utf-8"),
+            )
             self.assertTrue(os.path.isfile(os.path.join(directory, "TEST_data_chart_2023-01-01.jpg")))
             buttons = figure.layout.xaxis.rangeselector.buttons
             self.assertEqual(
                 [button.label for button in buttons],
-                ["10 years", "7 years", "4 years", "1 year"]
+                ["10 years", "7 years", "4 years", "3 years", "1 year"]
             )
-            self.assertEqual([button.count for button in buttons], [10, 7, 4, 1])
+            self.assertEqual([button.count for button in buttons], [10, 7, 4, 3, 1])
             self.assertTrue(all(button.step == "year" for button in buttons))
             self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmin, pd.Timestamp("2014-01-13"))
             self.assertEqual(figure.layout.xaxis.autorangeoptions.clipmax, pd.Timestamp("2023-01-13"))
